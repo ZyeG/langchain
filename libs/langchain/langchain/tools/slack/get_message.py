@@ -5,22 +5,35 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 import requests
 
-url = "https://slack.com/api/conversations.list"
+url = "https://slack.com/api/conversations.history"
 headers = {
-    "Authorization": "Bearer xoxb-6052895306385-6180531818643-3oiecwRxrFioYdjEQ8lnfdxa",
+    "Authorization": "Bearer xoxb-6052895306385-6180531818643-A6EeXfVDkrqmiPLmaTUJuTiM",
 }
 
-response = requests.get(url, headers=headers)
+params = {
+    "channel": "C065D1LCTCL",
+}
 
-# Check the status code of the response
-if response.status_code == 200:
-    # The request was successful
-    data = response.json()
-    # Do something with the data
-    print(data)
-else:
-    # There was an error with the request
-    print(f"Error: {response.status_code} - {response.text}")
+def get_message(channel_id, conversation_id):
+    response = requests.get(url, headers=headers, params=params)
+
+    # Check the status code of the response
+    if response.status_code == 200:
+        # The request was successful
+        data = response.json()
+        # Do something with the data
+        print(data)
+    else:
+        # There was an error with the request
+        print(f"Error: {response.status_code} - {response.text}")
+        return
+    
+
+def main():
+    get_message("C060ZJSS3AT", "1")
+
+if __name__ == "__main__":
+    main()
 
 
 
