@@ -8,9 +8,9 @@ from langchain.tools.slack.base import SlackBaseTool
 
 class SlackGetMessagesSchema(BaseModel):
     """Input schema for SlackGetMessages."""
-    channel: str = Field(
+    channel_id: str = Field(
         ...,
-        description="The name of the channel to get messages from.",
+        description="The channel id, private group, or IM channel to send message to.",
     )
 
 class SlackGetMessages(SlackBaseTool):
@@ -20,22 +20,15 @@ class SlackGetMessages(SlackBaseTool):
 
     def _run(
         self,
-        channel: str,
+        channel_id: str,
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         logging.getLogger(__name__)
 
-        result = self.client.conversations_list()
-        channelId_Name: Dict[str,str] = {}
-        self.save_conversations(result["channels"], channelId_Name)
+        result = self.client.conversations_history(channel_id)
+        conversation_history = []
+        conversation_history = result["messages"]
 
-        json.dumps(channelId_Name)
-        return json.dumps(result["channels"])
+        output_json = json.dumps(conversation_history)
 
-    @classmethod
-    def save_conversations(self, conversations, channelId_Name,
-    ) -> None:
-        conversation_id = ""
-        for conversation in conversations:
-            conversation_id = conversation["id"]
-            channelId_Name[conversation_id] = conversation["name"]
+        return output_json
